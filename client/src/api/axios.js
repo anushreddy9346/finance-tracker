@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://your-app-name.onrender.com/api',  // ← Put your Render URL here
+  baseURL: 'http://localhost:5000/api',  // Local backend URL
 });
 
 // Auto-attach JWT token
