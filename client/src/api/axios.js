@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api',  // Local backend URL
+  baseURL: 'https://finance-tracker-pe5z.onrender.com/api',  // Production backend URL
 });
 
 // Auto-attach JWT token
