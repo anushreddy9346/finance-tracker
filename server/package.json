@@ -1,6 +1,4 @@
 {
-  "name": "finance-tracker-server",
-  "version": "1.0.0",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"
