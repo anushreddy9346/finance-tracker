@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import API from '../api/axios';
 import { useNavigate, Link } from 'react-router-dom';
+import './Auth.css';
 
 export default function Register() {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
@@ -19,31 +20,40 @@ export default function Register() {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>💰 Finance Tracker</h2>
-        <h3 style={styles.subtitle}>Create Account</h3>
-        {error && <p style={styles.error}>{error}</p>}
-        <input style={styles.input} placeholder="Full Name"
-          onChange={e => setForm({ ...form, name: e.target.value })} />
-        <input style={styles.input} placeholder="Email" type="email"
-          onChange={e => setForm({ ...form, email: e.target.value })} />
-        <input style={styles.input} placeholder="Password" type="password"
-          onChange={e => setForm({ ...form, password: e.target.value })} />
-        <button style={styles.button} onClick={handleSubmit}>Register</button>
-        <p style={styles.link}>Already have account? <Link to="/login">Login</Link></p>
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <div className="auth-logo-text">
+            📄 ExpenseLy
+          </div>
+          <img src="/expense_illustration.png" alt="Expense Illustration" className="auth-illustration" />
+        </div>
+        <div className="auth-body">
+          <h3 className="auth-title">Sign up</h3>
+          {error && <p className="auth-error">{error}</p>}
+          
+          <div className="auth-input-group">
+            <span className="auth-input-icon">👤</span>
+            <input className="auth-input" placeholder="Name"
+              onChange={e => setForm({ ...form, name: e.target.value })} />
+          </div>
+
+          <div className="auth-input-group">
+            <span className="auth-input-icon">🔒</span>
+            <input className="auth-input" placeholder="Password" type="password"
+              onChange={e => setForm({ ...form, password: e.target.value })} />
+          </div>
+
+          <div className="auth-input-group">
+            <span className="auth-input-icon">✉️</span>
+            <input className="auth-input" placeholder="Email" type="email"
+              onChange={e => setForm({ ...form, email: e.target.value })} />
+          </div>
+          
+          <button className="auth-button" onClick={handleSubmit}>Sign up</button>
+          <p className="auth-link">Already have an account. <Link to="/login">SIGN IN</Link></p>
+        </div>
       </div>
     </div>
   );
 }
-
-const styles = {
-  container: { display:'flex', justifyContent:'center', alignItems:'center', height:'100vh', background:'#f0f2f5' },
-  card:      { background:'white', padding:'40px', borderRadius:'12px', boxShadow:'0 4px 20px rgba(0,0,0,0.1)', width:'350px' },
-  title:     { textAlign:'center', color:'#4f46e5', marginBottom:'5px' },
-  subtitle:  { textAlign:'center', color:'#333', marginBottom:'20px' },
-  input:     { width:'100%', padding:'12px', margin:'8px 0', borderRadius:'8px', border:'1px solid #ddd', boxSizing:'border-box' },
-  button:    { width:'100%', padding:'12px', background:'#4f46e5', color:'white', border:'none', borderRadius:'8px', cursor:'pointer', marginTop:'10px', fontSize:'16px' },
-  error:     { color:'red', textAlign:'center' },
-  link:      { textAlign:'center', marginTop:'15px' },
-};
