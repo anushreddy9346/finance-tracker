@@ -481,10 +481,12 @@ body {
 
 @media (max-width: 768px) {
   .dashboard-layout { flex-direction: column; }
-  .dash-sidebar { width: auto; border-radius: 0; padding: 20px; }
-  .sidebar-logo { margin-bottom: 20px; }
-  .sidebar-menu { display: flex; overflow-x: auto; margin-bottom: 10px; }
-  .sidebar-item { padding: 10px; white-space: nowrap; }
-  .sidebar-bottom { display: flex; gap: 10px; }
+  .dash-sidebar { width: auto; border-radius: 0; padding: 20px; flex-direction: column; }
+  .sidebar-logo { margin-bottom: 20px; justify-content: center; }
+  .sidebar-menu { display: flex; overflow-x: auto; margin-bottom: 10px; padding-bottom: 10px; }
+  .sidebar-item { padding: 10px 15px; white-space: nowrap; flex: 0 0 auto; }
+  .sidebar-bottom { display: flex; justify-content: center; margin-top: 10px; }
   .dash-main-content { padding: 20px; height: auto; overflow-y: visible; }
+  .dash-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .stats-cards { flex-direction: column; }
 }
