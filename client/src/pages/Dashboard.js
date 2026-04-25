@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -8,9 +8,18 @@ import './Dashboard.css';
 const COLORS = ['#4b6bfb','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
 const CATEGORIES = ['Food','Transport','Education','Entertainment','Health','Salary','Other'];
 
+const getIconForCategory = (cat) => {
+  const map = {
+    'Food': '🍔', 'Transport': '🚗', 'Education': '📚', 'Entertainment': '🎬',
+    'Health': '💊', 'Salary': '💰', 'Other': '🏷️'
+  };
+  return map[cat] || '🏷️';
+}
+
 export default function Dashboard() {
   const [transactions, setTransactions] = useState([]);
   const [form, setForm] = useState({ type:'expense', amount:'', category:'Food', note:'', date: new Date().toISOString().split('T')[0] });
+  const [showForm, setShowForm] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -35,6 +44,7 @@ export default function Dashboard() {
     if (!form.amount || !form.date) return alert('Fill all fields!');
     await API.post('/transactions', { ...form, amount: parseFloat(form.amount) });
     setForm({ type:'expense', amount:'', category:'Food', note:'', date: new Date().toISOString().split('T')[0] });
+    setShowForm(false);
     fetchData();
   };
 
@@ -46,118 +56,162 @@ export default function Dashboard() {
   const handleLogout = () => { logout(); navigate('/login'); };
 
   return (
-    <div className="dashboard-container">
-      {/* Navbar */}
-      <div className="dash-navbar">
-        <h2 className="dash-logo"><span>📄</span> ExpenseLy</h2>
-        <div className="dash-user-info">
-          <span className="dash-user-name">Hello, {user?.name || 'User'} 👋</span>
-          <button onClick={handleLogout} className="btn-logout">Logout</button>
+    <div className="dashboard-layout">
+      {/* SIDEBAR */}
+      <div className="dash-sidebar">
+        <div className="sidebar-logo">
+          <span>📄</span> ExpenseLy
+        </div>
+        <ul className="sidebar-menu">
+          <li className="sidebar-item active"><span>🏠</span> Dashboard</li>
+          <li className="sidebar-item"><span>💳</span> Card</li>
+          <li className="sidebar-item"><span>💸</span> Payment</li>
+          <li className="sidebar-item"><span>📊</span> Statistics</li>
+          <li className="sidebar-item"><span>👤</span> Profile</li>
+        </ul>
+        <div className="sidebar-bottom">
+          <div className="sidebar-item"><span>⚙️</span> Setting</div>
+          <div className="sidebar-item" onClick={handleLogout}><span>🚪</span> Logout</div>
         </div>
       </div>
 
-      {/* Summary Cards */}
-      <div className="dash-summary">
-        <div className="summary-card">
-          <div className="summary-icon-wrapper" style={{ background: '#e6f8f1', color: '#10b981' }}>📈</div>
-          <div className="summary-info">
-            <p>Total Income</p>
-            <h2 style={{ color: '#10b981' }}>₹{income.toFixed(2)}</h2>
+      {/* MAIN CONTENT */}
+      <div className="dash-main-content">
+        <div className="dash-header">
+          <div className="dash-greeting">
+            <h1>Good Morning, {user?.name || 'User'}</h1>
+            <p>Welcome back to your dashboard!</p>
           </div>
-        </div>
-        <div className="summary-card">
-          <div className="summary-icon-wrapper" style={{ background: '#fef2f2', color: '#ef4444' }}>📉</div>
-          <div className="summary-info">
-            <p>Total Expense</p>
-            <h2 style={{ color: '#ef4444' }}>₹{expense.toFixed(2)}</h2>
+          <div className="dash-header-right">
+            <input type="text" className="dash-search" placeholder="🔍 Search" />
+            <div className="dash-avatar">{user?.name ? user.name[0].toUpperCase() : 'U'}</div>
           </div>
-        </div>
-        <div className="summary-card">
-          <div className="summary-icon-wrapper" style={{ background: '#ebf0ff', color: '#4b6bfb' }}>🏦</div>
-          <div className="summary-info">
-            <p>Total Balance</p>
-            <h2 style={{ color: '#4b6bfb' }}>₹{balance.toFixed(2)}</h2>
-          </div>
-        </div>
-      </div>
-
-      <div className="dash-main">
-        {/* Add Transaction Form */}
-        <div className="dash-form-section">
-          <h3 className="section-title">➕ Add Transaction</h3>
-          
-          <div className="form-group">
-            <select className="dash-input" value={form.type} onChange={e => setForm({...form, type: e.target.value})}>
-              <option value="expense">Expense</option>
-              <option value="income">Income</option>
-            </select>
-          </div>
-          
-          <div className="form-group">
-            <input className="dash-input" type="number" placeholder="Amount (₹)" value={form.amount}
-              onChange={e => setForm({...form, amount: e.target.value})} />
-          </div>
-          
-          <div className="form-group">
-            <select className="dash-input" value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
-              {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-            </select>
-          </div>
-          
-          <div className="form-group">
-            <input className="dash-input" placeholder="Note (optional)" value={form.note}
-              onChange={e => setForm({...form, note: e.target.value})} />
-          </div>
-          
-          <div className="form-group">
-            <input className="dash-input" type="date" value={form.date}
-              onChange={e => setForm({...form, date: e.target.value})} />
-          </div>
-          
-          <button onClick={handleAdd} className="btn-add">Add Transaction</button>
         </div>
 
-        {/* Pie Chart */}
-        {pieData.length > 0 && (
-          <div className="dash-chart-section">
-            <h3 className="section-title">📊 Spending by Category</h3>
-            <PieChart width={300} height={250}>
-              <Pie data={pieData} cx={140} cy={110} outerRadius={90} dataKey="value" stroke="none">
-                {pieData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-              </Pie>
-              <Tooltip formatter={(val) => `₹${val}`} contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 5px 15px rgba(0,0,0,0.1)' }} />
-              <Legend />
-            </PieChart>
-          </div>
-        )}
-      </div>
-
-      {/* Transaction History */}
-      <div className="dash-history">
-        <h3 className="section-title">📋 Transaction History</h3>
-        {transactions.length === 0 && <p style={{ color:'#a3aed1', textAlign: 'center' }}>No transactions yet. Add one above to get started!</p>}
-        {transactions.map(t => (
-          <div key={t.id} className="history-item">
-            <div className="history-left">
-              <div className="history-icon" style={{ 
-                background: t.type === 'income' ? '#e6f8f1' : '#fef2f2',
-                color: t.type === 'income' ? '#10b981' : '#ef4444'
-              }}>
-                {t.type === 'income' ? '↓' : '↑'}
+        <div className="dash-grid">
+          {/* LEFT COLUMN */}
+          <div className="dash-left-col">
+            {/* Credit Card (Total Balance) */}
+            <div className="credit-card">
+              <div className="card-top">
+                <span>ExpenseLy Card</span>
+                <span>💳</span>
               </div>
-              <div className="history-details">
-                <strong>{t.category}</strong>
-                <span>{t.note ? `${t.note} · ` : ''}{t.date}</span>
+              <div className="card-chip"></div>
+              <p className="card-balance">₹{balance.toFixed(2)}</p>
+              <div className="card-bottom">
+                <span>TOTAL BALANCE</span>
+                <span>{new Date().getMonth()+1}/{new Date().getFullYear().toString().substr(-2)}</span>
               </div>
             </div>
-            <div className="history-right">
-              <span className="history-amount" style={{ color: t.type === 'income' ? '#10b981' : '#2b3674' }}>
-                {t.type === 'income' ? '+' : '-'}₹{t.amount}
-              </span>
-              <button onClick={() => handleDelete(t.id)} className="btn-delete">Delete</button>
+            
+            <div className="card-actions">
+              <button className="card-btn">➕ Add Money</button>
+              <button className="card-btn">🏦 Withdraw</button>
+            </div>
+
+            {/* Transactions History */}
+            <div className="dash-history">
+              <div className="section-header">
+                <h3>TRANSACTIONS HISTORY</h3>
+                <span style={{fontSize:'0.8rem', color:'#6a7187', cursor:'pointer'}}>See All ▾</span>
+              </div>
+              <div className="history-list">
+                {transactions.length === 0 && <p style={{color:'#8a92a6'}}>No recent transactions.</p>}
+                {transactions.slice(0, 5).map(t => (
+                  <div key={t.id} className="history-item">
+                    <div className="history-item-left">
+                      <div className="history-icon" style={{background: t.type==='income'?'#e3f2fd':'#ffebee'}}>
+                        {getIconForCategory(t.category)}
+                      </div>
+                      <div className="history-info">
+                        <strong>{t.category}</strong>
+                        <span>{t.date}</span>
+                      </div>
+                    </div>
+                    <div style={{display:'flex', alignItems:'center'}}>
+                      <span className={`history-amount ${t.type === 'income' ? 'amount-positive' : 'amount-negative'}`}>
+                        {t.type === 'income' ? '+' : '-'}₹{t.amount}
+                      </span>
+                      <button className="delete-btn" onClick={() => handleDelete(t.id)}>×</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        ))}
+
+          {/* RIGHT COLUMN */}
+          <div className="dash-right-col">
+            {/* Spending Statistics Summary */}
+            <div className="spending-stats">
+              <div className="section-header">
+                <h3>SPENDING STATISTICS</h3>
+              </div>
+              <div className="stats-cards">
+                <div className="stat-card">
+                  <h4>Total Income</h4>
+                  <div className="stat-value">₹{income.toFixed(2)}</div>
+                </div>
+                <div className="stat-card">
+                  <h4>Total Expense</h4>
+                  <div className="stat-value">₹{expense.toFixed(2)}</div>
+                </div>
+                <button className="stat-add-btn" onClick={() => setShowForm(!showForm)}>
+                  <span style={{fontSize:'1.5rem', marginBottom:'5px'}}>+</span>
+                  Add
+                </button>
+              </div>
+            </div>
+
+            <div className="bottom-section">
+              {/* Form Section */}
+              {showForm && (
+                <div className="form-container">
+                  <div className="section-header">
+                    <h3>ADD TRANSACTION</h3>
+                  </div>
+                  <select className="form-input" value={form.type} onChange={e => setForm({...form, type: e.target.value})}>
+                    <option value="expense">Expense</option>
+                    <option value="income">Income</option>
+                  </select>
+                  <input className="form-input" type="number" placeholder="Amount (₹)" value={form.amount}
+                    onChange={e => setForm({...form, amount: e.target.value})} />
+                  <select className="form-input" value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
+                    {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                  </select>
+                  <input className="form-input" placeholder="Note (optional)" value={form.note}
+                    onChange={e => setForm({...form, note: e.target.value})} />
+                  <input className="form-input" type="date" value={form.date}
+                    onChange={e => setForm({...form, date: e.target.value})} />
+                  <button onClick={handleAdd} className="form-btn">Save</button>
+                </div>
+              )}
+
+              {/* Chart Section */}
+              <div className="chart-container">
+                <div className="section-header">
+                  <h3>EXPENSES CLASSIFICATION</h3>
+                </div>
+                {pieData.length > 0 ? (
+                  <div style={{ width: '100%', height: 250 }}>
+                    <ResponsiveContainer>
+                      <PieChart>
+                        <Pie data={pieData} innerRadius={60} outerRadius={90} paddingAngle={5} dataKey="value" stroke="none">
+                          {pieData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                        </Pie>
+                        <Tooltip formatter={(val) => `₹${val}`} contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 5px 15px rgba(0,0,0,0.1)' }} />
+                        <Legend verticalAlign="bottom" height={36}/>
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                ) : (
+                  <p style={{color:'#8a92a6'}}>No expenses to chart yet.</p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
