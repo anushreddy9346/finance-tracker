@@ -3,8 +3,9 @@ import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import './Dashboard.css';
 
-const COLORS = ['#4f46e5','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
+const COLORS = ['#4b6bfb','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
 const CATEGORIES = ['Food','Transport','Education','Entertainment','Health','Salary','Other'];
 
 export default function Dashboard() {
@@ -45,61 +46,86 @@ export default function Dashboard() {
   const handleLogout = () => { logout(); navigate('/login'); };
 
   return (
-    <div style={{ fontFamily:'Arial', background:'#f0f2f5', minHeight:'100vh', padding:'20px' }}>
+    <div className="dashboard-container">
       {/* Navbar */}
-      <div style={{ background:'#4f46e5', color:'white', padding:'15px 30px', borderRadius:'12px', display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'20px' }}>
-        <h2>💰 Finance Tracker</h2>
-        <div>
-          <span>👤 {user?.name}</span>
-          <button onClick={handleLogout} style={{ marginLeft:'20px', background:'white', color:'#4f46e5', border:'none', padding:'8px 16px', borderRadius:'8px', cursor:'pointer' }}>Logout</button>
+      <div className="dash-navbar">
+        <h2 className="dash-logo"><span>📄</span> ExpenseLy</h2>
+        <div className="dash-user-info">
+          <span className="dash-user-name">Hello, {user?.name || 'User'} 👋</span>
+          <button onClick={handleLogout} className="btn-logout">Logout</button>
         </div>
       </div>
 
       {/* Summary Cards */}
-      <div style={{ display:'flex', gap:'20px', marginBottom:'20px', flexWrap:'wrap' }}>
-        {[
-          { label:'💰 Total Income',  value: income,  color:'#10b981' },
-          { label:'💸 Total Expense', value: expense, color:'#ef4444' },
-          { label:'🏦 Balance',       value: balance, color:'#4f46e5' },
-        ].map((card, i) => (
-          <div key={i} style={{ background:'white', padding:'20px', borderRadius:'12px', flex:'1', minWidth:'150px', boxShadow:'0 2px 10px rgba(0,0,0,0.08)', borderTop:`4px solid ${card.color}` }}>
-            <p style={{ color:'#666', margin:0 }}>{card.label}</p>
-            <h2 style={{ color: card.color, margin:'10px 0 0' }}>₹{card.value.toFixed(2)}</h2>
+      <div className="dash-summary">
+        <div className="summary-card">
+          <div className="summary-icon-wrapper" style={{ background: '#e6f8f1', color: '#10b981' }}>📈</div>
+          <div className="summary-info">
+            <p>Total Income</p>
+            <h2 style={{ color: '#10b981' }}>₹{income.toFixed(2)}</h2>
           </div>
-        ))}
+        </div>
+        <div className="summary-card">
+          <div className="summary-icon-wrapper" style={{ background: '#fef2f2', color: '#ef4444' }}>📉</div>
+          <div className="summary-info">
+            <p>Total Expense</p>
+            <h2 style={{ color: '#ef4444' }}>₹{expense.toFixed(2)}</h2>
+          </div>
+        </div>
+        <div className="summary-card">
+          <div className="summary-icon-wrapper" style={{ background: '#ebf0ff', color: '#4b6bfb' }}>🏦</div>
+          <div className="summary-info">
+            <p>Total Balance</p>
+            <h2 style={{ color: '#4b6bfb' }}>₹{balance.toFixed(2)}</h2>
+          </div>
+        </div>
       </div>
 
-      <div style={{ display:'flex', gap:'20px', flexWrap:'wrap' }}>
+      <div className="dash-main">
         {/* Add Transaction Form */}
-        <div style={{ background:'white', padding:'25px', borderRadius:'12px', flex:'1', minWidth:'280px', boxShadow:'0 2px 10px rgba(0,0,0,0.08)' }}>
-          <h3>➕ Add Transaction</h3>
-          <select style={inp} value={form.type} onChange={e => setForm({...form, type: e.target.value})}>
-            <option value="expense">Expense</option>
-            <option value="income">Income</option>
-          </select>
-          <input style={inp} type="number" placeholder="Amount (₹)" value={form.amount}
-            onChange={e => setForm({...form, amount: e.target.value})} />
-          <select style={inp} value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
-            {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-          </select>
-          <input style={inp} placeholder="Note (optional)" value={form.note}
-            onChange={e => setForm({...form, note: e.target.value})} />
-          <input style={inp} type="date" value={form.date}
-            onChange={e => setForm({...form, date: e.target.value})} />
-          <button onClick={handleAdd} style={{ width:'100%', padding:'12px', background:'#4f46e5', color:'white', border:'none', borderRadius:'8px', cursor:'pointer', fontSize:'16px' }}>
-            Add Transaction
-          </button>
+        <div className="dash-form-section">
+          <h3 className="section-title">➕ Add Transaction</h3>
+          
+          <div className="form-group">
+            <select className="dash-input" value={form.type} onChange={e => setForm({...form, type: e.target.value})}>
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+            </select>
+          </div>
+          
+          <div className="form-group">
+            <input className="dash-input" type="number" placeholder="Amount (₹)" value={form.amount}
+              onChange={e => setForm({...form, amount: e.target.value})} />
+          </div>
+          
+          <div className="form-group">
+            <select className="dash-input" value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
+              {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+            </select>
+          </div>
+          
+          <div className="form-group">
+            <input className="dash-input" placeholder="Note (optional)" value={form.note}
+              onChange={e => setForm({...form, note: e.target.value})} />
+          </div>
+          
+          <div className="form-group">
+            <input className="dash-input" type="date" value={form.date}
+              onChange={e => setForm({...form, date: e.target.value})} />
+          </div>
+          
+          <button onClick={handleAdd} className="btn-add">Add Transaction</button>
         </div>
 
         {/* Pie Chart */}
         {pieData.length > 0 && (
-          <div style={{ background:'white', padding:'25px', borderRadius:'12px', boxShadow:'0 2px 10px rgba(0,0,0,0.08)' }}>
-            <h3>📊 Spending by Category</h3>
+          <div className="dash-chart-section">
+            <h3 className="section-title">📊 Spending by Category</h3>
             <PieChart width={300} height={250}>
-              <Pie data={pieData} cx={140} cy={110} outerRadius={90} dataKey="value">
+              <Pie data={pieData} cx={140} cy={110} outerRadius={90} dataKey="value" stroke="none">
                 {pieData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
               </Pie>
-              <Tooltip formatter={(val) => `₹${val}`} />
+              <Tooltip formatter={(val) => `₹${val}`} contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 5px 15px rgba(0,0,0,0.1)' }} />
               <Legend />
             </PieChart>
           </div>
@@ -107,23 +133,28 @@ export default function Dashboard() {
       </div>
 
       {/* Transaction History */}
-      <div style={{ background:'white', padding:'25px', borderRadius:'12px', marginTop:'20px', boxShadow:'0 2px 10px rgba(0,0,0,0.08)' }}>
-        <h3>📋 Transaction History</h3>
-        {transactions.length === 0 && <p style={{ color:'#999' }}>No transactions yet. Add one above!</p>}
+      <div className="dash-history">
+        <h3 className="section-title">📋 Transaction History</h3>
+        {transactions.length === 0 && <p style={{ color:'#a3aed1', textAlign: 'center' }}>No transactions yet. Add one above to get started!</p>}
         {transactions.map(t => (
-          <div key={t.id} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'12px', borderBottom:'1px solid #f0f0f0' }}>
-            <div>
-              <span style={{ fontSize:'18px' }}>{t.type === 'income' ? '🟢' : '🔴'}</span>
-              <strong style={{ marginLeft:'10px' }}>{t.category}</strong>
-              <span style={{ color:'#999', marginLeft:'10px', fontSize:'13px' }}>{t.note} · {t.date}</span>
+          <div key={t.id} className="history-item">
+            <div className="history-left">
+              <div className="history-icon" style={{ 
+                background: t.type === 'income' ? '#e6f8f1' : '#fef2f2',
+                color: t.type === 'income' ? '#10b981' : '#ef4444'
+              }}>
+                {t.type === 'income' ? '↓' : '↑'}
+              </div>
+              <div className="history-details">
+                <strong>{t.category}</strong>
+                <span>{t.note ? `${t.note} · ` : ''}{t.date}</span>
+              </div>
             </div>
-            <div style={{ display:'flex', alignItems:'center', gap:'15px' }}>
-              <span style={{ color: t.type === 'income' ? '#10b981' : '#ef4444', fontWeight:'bold', fontSize:'18px' }}>
+            <div className="history-right">
+              <span className="history-amount" style={{ color: t.type === 'income' ? '#10b981' : '#2b3674' }}>
                 {t.type === 'income' ? '+' : '-'}₹{t.amount}
               </span>
-              <button onClick={() => handleDelete(t.id)} style={{ background:'#fee2e2', color:'#ef4444', border:'none', padding:'6px 12px', borderRadius:'6px', cursor:'pointer' }}>
-                Delete
-              </button>
+              <button onClick={() => handleDelete(t.id)} className="btn-delete">Delete</button>
             </div>
           </div>
         ))}
@@ -131,5 +162,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
-const inp = { width:'100%', padding:'10px', margin:'6px 0', borderRadius:'8px', border:'1px solid #ddd', boxSizing:'border-box' };
