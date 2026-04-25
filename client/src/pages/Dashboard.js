@@ -6,12 +6,13 @@ import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
 const COLORS = ['#4b6bfb','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
-const CATEGORIES = ['Food','Transport','Education','Entertainment','Health','Salary','Other'];
+const EXPENSE_CATEGORIES = ['Food', 'Transport', 'Education', 'Entertainment', 'Health', 'Shopping', 'Other'];
+const INCOME_CATEGORIES = ['Salary', 'Freelance', 'Investments', 'Other'];
 
 const getIconForCategory = (cat) => {
   const map = {
     'Food': '🍔', 'Transport': '🚗', 'Education': '📚', 'Entertainment': '🎬',
-    'Health': '💊', 'Salary': '💰', 'Other': '🏷️'
+    'Health': '💊', 'Salary': '💰', 'Freelance': '💻', 'Investments': '📈', 'Shopping': '🛍️', 'Other': '🏷️'
   };
   return map[cat] || '🏷️';
 }
@@ -35,7 +36,7 @@ export default function Dashboard() {
   const expense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
   const balance = income - expense;
 
-  const pieData = CATEGORIES.map(cat => ({
+  const pieData = EXPENSE_CATEGORIES.map(cat => ({
     name: cat,
     value: transactions.filter(t => t.category === cat && t.type === 'expense')
                         .reduce((s, t) => s + t.amount, 0)
@@ -172,14 +173,17 @@ export default function Dashboard() {
                     <div className="section-header">
                       <h3>ADD TRANSACTION</h3>
                     </div>
-                    <select className="form-input" value={form.type} onChange={e => setForm({...form, type: e.target.value})}>
+                    <select className="form-input" value={form.type} onChange={e => {
+                      const newType = e.target.value;
+                      setForm({...form, type: newType, category: newType === 'income' ? 'Salary' : 'Food'});
+                    }}>
                       <option value="expense">Expense</option>
                       <option value="income">Income</option>
                     </select>
                     <input className="form-input" type="number" placeholder="Amount (₹)" value={form.amount}
                       onChange={e => setForm({...form, amount: e.target.value})} />
                     <select className="form-input" value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
-                      {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                      {(form.type === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES).map(c => <option key={c}>{c}</option>)}
                     </select>
                     <input className="form-input" placeholder="Note (optional)" value={form.note}
                       onChange={e => setForm({...form, note: e.target.value})} />
