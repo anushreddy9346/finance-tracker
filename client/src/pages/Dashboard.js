@@ -32,19 +32,19 @@ export default function Dashboard() {
 
   useEffect(() => { fetchData(); }, []);
 
-  const income  = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
-  const expense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+  const income  = transactions.filter(t => t.type === 'income').reduce((s, t) => s + parseFloat(t.amount), 0);
+  const expense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + parseFloat(t.amount), 0);
   const balance = income - expense;
 
   const pieData = EXPENSE_CATEGORIES.map(cat => ({
     name: cat,
     value: transactions.filter(t => t.category === cat && t.type === 'expense')
-                        .reduce((s, t) => s + t.amount, 0)
+                        .reduce((s, t) => s + parseFloat(t.amount), 0)
   })).filter(d => d.value > 0);
 
   const handleAdd = async () => {
     if (!form.amount || !form.date) return alert('Fill all fields!');
-    await API.post('/transactions', { ...form, amount: parseFloat(form.amount) });
+    await API.post('/transactions', { ...form, amount: Math.abs(parseFloat(form.amount)) });
     setForm({ type:'expense', amount:'', category:'Food', note:'', date: new Date().toISOString().split('T')[0] });
     setShowForm(false);
     fetchData();
