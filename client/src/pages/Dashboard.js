@@ -248,6 +248,46 @@ export default function Dashboard() {
               ))}
             </div>
           </div>
+        ) : activeTab === 'statistics' ? (
+          <div className="dash-statistics" style={{ display: 'flex', flexDirection: 'column', gap: '30px', flex: 1 }}>
+            <div className="section-header">
+              <h3>YOUR SPENDING STATISTICS</h3>
+            </div>
+            
+            <div className="stats-cards" style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+              <div className="stat-card" style={{ flex: 1, background: 'white', padding: '25px', borderRadius: '20px', boxShadow: '0 5px 15px rgba(0,0,0,0.03)', minWidth: '200px' }}>
+                <h4 style={{ margin: '0 0 10px', color: '#6a7187' }}>Total Income</h4>
+                <h2 style={{ margin: 0, color: '#10b981', fontSize: '2rem' }}>₹{income.toFixed(2)}</h2>
+              </div>
+              <div className="stat-card" style={{ flex: 1, background: 'white', padding: '25px', borderRadius: '20px', boxShadow: '0 5px 15px rgba(0,0,0,0.03)', minWidth: '200px' }}>
+                <h4 style={{ margin: '0 0 10px', color: '#6a7187' }}>Total Expense</h4>
+                <h2 style={{ margin: 0, color: '#ef4444', fontSize: '2rem' }}>₹{expense.toFixed(2)}</h2>
+              </div>
+              <div className="stat-card" style={{ flex: 1, background: 'white', padding: '25px', borderRadius: '20px', boxShadow: '0 5px 15px rgba(0,0,0,0.03)', minWidth: '200px' }}>
+                <h4 style={{ margin: '0 0 10px', color: '#6a7187' }}>Net Balance</h4>
+                <h2 style={{ margin: 0, color: '#4b6bfb', fontSize: '2rem' }}>₹{balance.toFixed(2)}</h2>
+              </div>
+            </div>
+
+            <div className="chart-container" style={{ background: 'white', padding: '40px', borderRadius: '20px', boxShadow: '0 5px 15px rgba(0,0,0,0.03)', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <h3 style={{ margin: '0 0 30px', color: '#1a1d2d', textTransform: 'uppercase', fontSize: '1rem', width: '100%' }}>Expense Breakdown by Category</h3>
+              {pieData.length > 0 ? (
+                <div style={{ width: '100%', height: 400, maxWidth: '700px' }}>
+                  <ResponsiveContainer>
+                    <PieChart>
+                      <Pie data={pieData} innerRadius={100} outerRadius={150} paddingAngle={5} dataKey="value" stroke="none" label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                        {pieData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                      </Pie>
+                      <Tooltip formatter={(val) => `₹${val}`} contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 5px 15px rgba(0,0,0,0.1)' }} />
+                      <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <p style={{color:'#8a92a6'}}>Not enough data to display statistics. Add some expenses!</p>
+              )}
+            </div>
+          </div>
         ) : (
           <div style={{ background: 'white', padding: '40px', borderRadius: '20px', textAlign: 'center' }}>
             <h3 style={{ fontSize: '1.5rem', marginBottom: '10px' }}>Coming Soon</h3>
