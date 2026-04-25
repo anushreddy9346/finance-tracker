@@ -84,8 +84,16 @@ export default function Dashboard() {
       <div className="dash-main-content">
         <div className="dash-header">
           <div className="dash-greeting">
-            <h1>{activeTab === 'dashboard' ? `Good Morning, ${user?.name || 'User'}` : activeTab === 'transactions' ? 'All Transactions' : 'Section'}</h1>
-            <p>{activeTab === 'dashboard' ? 'Welcome back to your dashboard!' : activeTab === 'transactions' ? 'View and manage all your past transactions here.' : 'Under development.'}</p>
+            <h1>
+              {activeTab === 'dashboard' ? `Good Morning, ${user?.name || 'User'}` : 
+               activeTab === 'transactions' ? 'All Transactions' : 
+               activeTab === 'statistics' ? 'Spending Statistics' : 'Section'}
+            </h1>
+            <p>
+              {activeTab === 'dashboard' ? 'Welcome back to your dashboard!' : 
+               activeTab === 'transactions' ? 'View and manage all your past transactions here.' : 
+               activeTab === 'statistics' ? 'Detailed breakdown of your financial activity.' : 'Under development.'}
+            </p>
           </div>
           <div className="dash-header-right">
             <span style={{ fontWeight: 600, fontSize: '1rem', color: '#1a1d2d', background: 'white', padding: '10px 20px', borderRadius: '20px', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
