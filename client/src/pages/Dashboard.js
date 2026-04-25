@@ -73,9 +73,6 @@ export default function Dashboard() {
           <li className={`sidebar-item ${activeTab === 'statistics' ? 'active' : ''}`} onClick={() => setActiveTab('statistics')}>
             <span>📊</span> Statistics
           </li>
-          <li className={`sidebar-item ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>
-            <span>👤</span> Profile
-          </li>
         </ul>
         <div className="sidebar-bottom">
           <div className="sidebar-item" onClick={handleLogout}><span>🚪</span> Logout</div>
@@ -90,8 +87,9 @@ export default function Dashboard() {
             <p>{activeTab === 'dashboard' ? 'Welcome back to your dashboard!' : activeTab === 'transactions' ? 'View and manage all your past transactions here.' : 'Under development.'}</p>
           </div>
           <div className="dash-header-right">
-            <input type="text" className="dash-search" placeholder="🔍 Search" />
-            <div className="dash-avatar">{user?.name ? user.name[0].toUpperCase() : 'U'}</div>
+            <span style={{ fontWeight: 600, fontSize: '1rem', color: '#1a1d2d', background: 'white', padding: '10px 20px', borderRadius: '20px', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
+              👤 {user?.name || 'User'}
+            </span>
           </div>
         </div>
 
@@ -113,11 +111,6 @@ export default function Dashboard() {
                 </div>
               </div>
               
-              <div className="card-actions">
-                <button className="card-btn">➕ Add Money</button>
-                <button className="card-btn">🏦 Withdraw</button>
-              </div>
-
               {/* Transactions History */}
               <div className="dash-history">
                 <div className="section-header">
